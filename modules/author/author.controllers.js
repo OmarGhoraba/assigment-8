@@ -8,7 +8,7 @@ export const AddAuthor = async (req, res) => {
 
 export const GetAllAuthors = async (req, res) => {
    const { pageSize ,pageNumber} = req.query;
-   console.log(pageNumber,pageSize);
+
     const Authors = await Author.find()
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize);
@@ -36,4 +36,12 @@ export const UpdateAuthor = async (req, res) => {
   await Author.findOneAndUpdate(author, req.body);
   res.status(200).json({ message: "updated successfully" });
 };
-export const DeleteAuthor = async (req, res) => {};
+export const DeleteAuthor = async (req, res) => {
+   const { authorId } = req.params;
+   const author = await Author.findOne({ authorId });
+   if (!author) {
+     res.status(401).json({ message: "no authors with this id" });
+   }
+   await Author.findOneAndDelete(author);
+   res.status(200).json({ message: "Deleted successfully" });
+};
